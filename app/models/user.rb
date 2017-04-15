@@ -14,7 +14,10 @@ class User < ActiveRecord::Base
 
   has_many :ownerships , foreign_key: "user_id", dependent: :destroy
   has_many :items ,through: :ownerships
-
+  has_many :wants, class_name: "Want", foreign_key: "user_id", dependent: :destroy
+  has_many :want_items , through: :wants, source: :item
+  has_many :haves, class_name: "Have", foreign_key: "user_id", dependent: :destroy
+  has_many :have_items , through: :haves, source: :item
 
   # 他のユーザーをフォローする
   def follow(other_user)
@@ -29,22 +32,36 @@ class User < ActiveRecord::Base
     following_users.include?(other_user)
   end
 
-  ## TODO 実装
-  def have(item)
-  end
-
-  def unhave(item)
-  end
-
-  def have?(item)
-  end
-
+  ## want	item	itemをwantする。
   def want(item)
+    wants.find_or_create_by(item_id: item.id)
   end
+  
 
-  def unwant(item)
-  end
-
+  ## want?	item	itemをwantしている場合true、wantしていない場合falseを返す。
   def want?(item)
+    want_items.include?(item)
+  end
+
+  ## unwant	item	itemのwantを解除する。
+  def unwant(item)
+    want = wants.find_by(item_id: item.id)
+    want.destroy if want 
+  end
+
+  ## have	item	itemをhaveする。
+  def have(item)
+    haves.find_or_create_by(item_id: item.id)
+  end
+
+  ## have?	item	itemをhaveしている場合true、haveしていない場合falseを返す。
+  def have?(item)
+    have_items.include?(item)
+  end
+
+  ## unhave	item	itemのhaveを解除する
+  def unhave(item)
+    have = haves.find_by(item_id: item.id)
+    have.destroy if have
   end
 end

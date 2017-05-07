@@ -1,2 +1,24 @@
- <%= @items %>
- 
+<h1> Haveランキング トップ10 </h1>
+<br><br>
+
+<body>
+<table border="1">
+
+ <tr>
+   <th>順位</th>
+   <th>タイトル</th>
+   <th>画像</th>
+ </tr>
+
+
+<% @items.each.with_index(1) do |item,i| %>
+
+ <tr>
+  <td width="10%", height="20", align="center"><%= "#{i}位" %></td>
+  <td width="20%", height="20", align="center"><%= item.title %></td>
+  <td width="70%", height="20", align="center"><%= image_tag(item.large_image , alt: item.title) %></td>
+ </tr>    
+
+<% end %>
+
+</body>
